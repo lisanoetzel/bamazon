@@ -60,14 +60,30 @@
                 console.log(res[0].stock_quantity);
                 if (inquirerResponse.itemAMT <= res[0].stock_quantity) {
                     console.log("Success");
-                }
+                    // Updating the SQL database 
+                                connection.query("UPDATE products SET ? WHERE ?",
+                                [
+                                    {
+                                        stock_quantity: res[0].stock_quantity - inquirerResponse.itemAMT
+                                    },
+                                    {
+                                        item_id: inquirerResponse.itemID
+                                    }
+                                ], function(err,res){
+                                        console.log(res);
+                                    
+                                }
+                                )}
                 else {
-                    console.log("Failure");
-                }
-                console.log(typeof inquirerResponse.itemAMT);
-                connection.end()
+                    console.log("Failure - There are only " + res[0].stock_quantity + " available");
+                    }
+                    
+                // runQuestions(); 
+                // connection.end();
+                // console.log(typeof inquirerResponse.itemAMT);
+                // connection.end();
             })
-            
+         
         })
     }
     
@@ -85,3 +101,5 @@
 // //10.25 + 10.26 + 12.10
 
 
+  
+           
