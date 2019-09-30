@@ -46,12 +46,12 @@
             message: "How many would you like?",
             name: "itemAMT" 
         },
-        // {
-        //     type: "confirm",
-        //     message: "Would you like to purchase something else?",
-        //     name: "confirm",
-        //     default: true
-        // }
+        {
+            type: "confirm",
+            message: "Would you like to purchase something else?",
+            name: "confirm",
+            default: true
+        },
     ])
         .then(function(inquirerResponse){
 
@@ -59,7 +59,8 @@
                 if (err) throw err;
                 console.log(res[0].stock_quantity);
                 if (inquirerResponse.itemAMT <= res[0].stock_quantity) {
-                    console.log("Success");
+                    console.log("Success! Your total amount is " + inquirerResponse.itemAMT * res[0].price + " dollars!");
+                    console.table(res);
                     // Updating the SQL database 
                                 connection.query("UPDATE products SET ? WHERE ?",
                                 [
@@ -68,20 +69,26 @@
                                     },
                                     {
                                         item_id: inquirerResponse.itemID
-                                    }
+                                    },
+                                    //trying to update price too
+                                    {
+                                        price: res[0].price * inquirerResponse.itemAMT
+                                    },
+                                    {   item_id: inquirerResponse.itemID
+                                    },
                                 ], function(err,res){
                                         console.log(res);
-                                    
+                                        runQuestions();    
                                 }
                                 )}
                 else {
                     console.log("Failure - There are only " + res[0].stock_quantity + " available");
-                    }
-                    
-                // runQuestions(); 
-                // connection.end();
+                    console.table(res);
+                    startDisplayProducts();
+                    };
+
                 // console.log(typeof inquirerResponse.itemAMT);
-                // connection.end();
+                
             })
          
         })
@@ -92,7 +99,7 @@
 
 // //if purchaseSuccessfull , subtract User order from pre-established quantity and) update MySQL db &  message 1: "Thank you ! Your order has been processed !"
 
-// // or else generate message 2: "I'm sorry, that quantity is not available" 
+
 
 // // after either scenario, message prompt "Would you like to purchase something else? Would you like to leave?" return to message A
 
@@ -102,4 +109,3 @@
 
 
   
-           
